@@ -52,6 +52,26 @@ Gap:
                   {% comment %} <span class="bottom">{{ value.prev_day_close }}</span> {% endcomment %}
                   <h2 style="text-align:center;color:black;b-color:pink;font-size:medium;" class="btn alert-warning">{{dateToday}}
                 </div>
+              </li>
+              <li class="breadcrumb-item">
+                <div class="div-container">
+                {% for animal in liveEqui %}
+                  {% if "Call" in animal.strike %}
+                    {% if animal.section|divisibleby:2%}
+                    <h2 style="text-align:center;color:white;font-size:medium" class="badge bg-success text-wrap">BUY </h2>
+                    {% else %}
+                    <h2 style="text-align:center;color:white;font-size:medium" class="badge bg-danger text-wrap">SELL</h2>
+                    {% endif %}
+                  {% else %}
+                  {% if animal.section|divisibleby:2%}
+                  <h2 style="text-align:center;color:white;font-size:medium" class="badge bg-success text-wrap">BUY </h2>
+                  {% else %}
+                  <h2 style="text-align:center;color:white;font-size:medium" class="badge bg-danger text-wrap">SELL</h2>
+                  {% endif %}
+                  {% endif %}
+                {% endfor %}
+
+                </div>
 
                 </li>
 
@@ -162,7 +182,7 @@ Gap:
 
                         <tr>
                         {% comment %} colspan=2 {% endcomment %}
-                        <td rowspan=2 style="width:2%"><b>{{ record.time|time }}<b></td>
+                        <td rowspan=2 style="width:2%"><b>{{ record.time|date:'H:i:s' }}<b></td>
                           <td style="width:2%;background-color:green;color:white;text-align:center;">{{ record.call1 }}</td>
                           {% comment %} <td style="width:2%;text-align:center"> <i class="fas fa-dot-circle xxx-small;color:blue"></i> <b>{{ record.callstrike }}</b><span style="color:green">  <b>CE</b></span> </td> {% endcomment %}
                           {% if record.call1 > record.put2 %}

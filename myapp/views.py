@@ -74,14 +74,26 @@ def logout(request):
 def home(request):
     # Importing symbol list from nse and dropdown it for selection
 
-    import requests
-    url = 'https://www.truedata.in/downloads/symbol_lists/13.NSE_ALL_OPTIONS.txt'
-    s = requests.get(url).content
-    stringlist=[x.decode('utf-8').split('2')[0] for x in s.splitlines()]
+    # import requests
+    # url = 'https://www.truedata.in/downloads/symbol_lists/13.NSE_ALL_OPTIONS.txt'
+    # s = requests.get(url).content
+    # stringlist=[x.decode('utf-8').split('2')[0] for x in s.splitlines()]
 
-    fnolist = list(set(stringlist))
+    # fnolist = list(set(stringlist))
 
     # fnolist = list(LiveSegment.objects.values_list('symbol', flat=True).distinct())
+
+    fnolist = ['AARTIIND','ABBOTINDIA','ABFRL','ACC','ADANIPORTS','ALKEM','AMARAJABAT','AMBUJACEM',
+'APOLLOHOSP','ASIANPAINT','ASTRAL','ATUL','AUBANK','AUROPHARMA','AXISBANK','BAJAJ-AUTO','BAJAJFINSV','BAJFINANCE','BALRAMCHIN','BANDHANBNK'
+,'BATAINDIA','BERGEPAINT','BHARATFORG','BHARTIARTL','BIOCON','BOSCHLTD','BPCL','BSOFT','CANFINHOME','CHAMBLFERT','CHOLAFIN'
+,'CIPLA','COFORGE','COLPAL','CONCOR','COROMANDEL','CROMPTON','CUMMINSIND','DABUR','DALBHARAT','DEEPAKNTR','DELTACORP','DIVISLAB','DIXON','DLF'
+,'DRREDDY','ESCORTS','GLENMARK','GNFC','GODREJCP','GODREJPROP','GRANULES','GRASIM','GSPL','GUJGASLTD','HAL','HAVELLS','HCLTECH','HINDPETRO','HDFC','HDFCAMC'
+,'HDFCBANK','HDFCLIFE','HINDALCO','HINDUNILVR','HONAUT','ICICIBANK','ICICIGI','ICICIPRULI','IGL'
+,'INDIAMART','INDIGO','INDUSINDBK','INFY','INTELLECT','IPCALAB','IRCTC','JINDALSTEL','JKCEMENT','JSWSTEEL','JUBLFOOD','KOTAKBANK','LALPATHLAB','LAURUSLABS','LICHSGFIN'
+,'LT','LTI','LTTS','LUPIN','MARICO','MARUTI','MCDOWELL-N','MCX','MFSL','MGL','MINDTREE','MPHASIS','MRF','MUTHOOTFIN','NAM-INDIA','NAUKRI'
+,'NAVINFLUOR','OBEROIRLTY','PAGEIND','PERSISTENT','PIDILITIND','PIIND','POLYCAB','PVR','RAMCOCEM','RELIANCE','SBICARD'
+,'SBILIFE','SBIN','SHREECEM','SIEMENS','SRF','SRTRANSFIN','SUNPHARMA','SUNTV','SYNGENE','TATACHEM','TATACOMM','TATACONSUM','TATAMOTORS','RAIN','TATASTEEL','TECHM'
+,'TORNTPHARM','TORNTPOWER','TRENT','TVSMOTOR','UBL','ULTRACEMCO','UPL','VOLTAS','WHIRLPOOL','WIPRO','ZEEL','ZYDUSLIFE','INDUSTOWER','OFSS']
 
     return render(request,"home.html",{'fnolist':fnolist})
 
@@ -262,8 +274,8 @@ def equity(request):
     putCrossed_odd = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=True).filter(strike="Put Crossed").order_by('-time')
     callCrossed_even = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=False).filter(strike="Call Crossed").order_by('-time')
     putCrossed_even = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=False).filter(strike="Put Crossed").order_by('-time')
-    gain = LiveSegment.objects.filter(segment="gain").order_by('-change_perc')
-    loss = LiveSegment.objects.filter(segment="loss").order_by('-change_perc')
+    gain = LiveSegment.objects.filter(segment="above").order_by('-change_perc')
+    loss = LiveSegment.objects.filter(segment="below").order_by('-change_perc')
     calleven = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=False).filter(strike="Call 1 percent").filter(change_perc__gte=2).order_by('section')  
     callodd = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=True).filter(strike="Call 1 percent").filter(change_perc__gte=2).order_by('section') 
     puteven = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=False).filter(strike="Put 1 percent").filter(change_perc__lte=-2).order_by('section')  
@@ -832,16 +844,16 @@ def sample(request):
     # fnolist.sort()
     # fnolist = ['1','2']
 
-    fnolist = ['AARTIIND','ABBOTINDIA','ABFRL','ACC','ADANIENT','ADANIPORTS','ALKEM','AMARAJABAT','AMBUJACEM',
-    'APOLLOHOSP','APOLLOTYRE','ASHOKLEY','ASIANPAINT','ASTRAL','ATUL','AUBANK','AUROPHARMA','AXISBANK','BAJAJ-AUTO','BAJAJFINSV','BAJFINANCE','BALKRISIND','BALRAMCHIN','BANDHANBNK'
-    ,'BATAINDIA','BEL','BERGEPAINT','BHARATFORG','BHARTIARTL','BIOCON','BOSCHLTD','BPCL','BSOFT','CANFINHOME','CHAMBLFERT','CHOLAFIN'
-    ,'CIPLA','COALINDIA','COFORGE','COLPAL','CONCOR','COROMANDEL','CROMPTON','CUMMINSIND','DABUR','DALBHARAT','DEEPAKNTR','DELTACORP','DIVISLAB','DIXON','DLF'
-    ,'DRREDDY','ESCORTS','GLENMARK','GNFC','GODREJCP','GODREJPROP','GRANULES','GRASIM','GSPL','GUJGASLTD','HAL','HAVELLS','HCLTECH','HDFC','HDFCAMC'
-    ,'HDFCBANK','HDFCLIFE','HINDALCO','HINDCOPPER','HINDPETRO','HINDUNILVR','HONAUT','IBULHSGFIN','ICICIBANK','ICICIGI','ICICIPRULI','IEX','IGL','INDHOTEL','INDIACEM'
-    ,'INDIAMART','INDIGO','INDUSINDBK','INFY','INTELLECT','IPCALAB','IRCTC','ITC','JINDALSTEL','JKCEMENT','JSWSTEEL','JUBLFOOD','KOTAKBANK','LALPATHLAB','LAURUSLABS','LICHSGFIN'
-    ,'LT','LTI','LTTS','LUPIN','M&M','M&MFIN','MARICO','MARUTI','MCDOWELL-N','MCX','MFSL','MGL','MINDTREE','MOTHERSON','MPHASIS','MRF','MUTHOOTFIN','NAM-INDIA','NATIONALUM','NAUKRI'
-    ,'NAVINFLUOR','NMDC','OBEROIRLTY','ONGC','PAGEIND','PERSISTENT','PETRONET','PIDILITIND','PIIND','POLYCAB','POWERGRID','PVR','RAIN','RAMCOCEM','RELIANCE','SBICARD'
-    ,'SBILIFE','SBIN','SHREECEM','SIEMENS','SRF','SRTRANSFIN','SUNPHARMA','SUNTV','SYNGENE','TATACHEM','TATACOMM','TATACONSUM','TATAMOTORS','TATAPOWER','TATASTEEL','TECHM'
+    fnolist = ['AARTIIND','ABBOTINDIA','ABFRL','ACC','ADANIPORTS','ALKEM','AMARAJABAT','AMBUJACEM',
+    'APOLLOHOSP','ASIANPAINT','ASTRAL','ATUL','AUBANK','AUROPHARMA','AXISBANK','BAJAJ-AUTO','BAJAJFINSV','BAJFINANCE','BALRAMCHIN','BANDHANBNK'
+    ,'BATAINDIA','BERGEPAINT','BHARATFORG','BHARTIARTL','BIOCON','BOSCHLTD','BPCL','BSOFT','CANFINHOME','CHAMBLFERT','CHOLAFIN'
+    ,'CIPLA','COFORGE','COLPAL','CONCOR','COROMANDEL','CROMPTON','CUMMINSIND','DABUR','DALBHARAT','DEEPAKNTR','DELTACORP','DIVISLAB','DIXON','DLF'
+    ,'DRREDDY','ESCORTS','GLENMARK','GNFC','GODREJCP','GODREJPROP','GRANULES','GRASIM','GSPL','GUJGASLTD','HAL','HAVELLS','HCLTECH','HINDPETRO','HDFC','HDFCAMC'
+    ,'HDFCBANK','HDFCLIFE','HINDALCO','HINDUNILVR','HONAUT','ICICIBANK','ICICIGI','ICICIPRULI','IGL'
+    ,'INDIAMART','INDIGO','INDUSINDBK','INFY','INTELLECT','IPCALAB','IRCTC','JINDALSTEL','JKCEMENT','JSWSTEEL','JUBLFOOD','KOTAKBANK','LALPATHLAB','LAURUSLABS','LICHSGFIN'
+    ,'LT','LTI','LTTS','LUPIN','MARICO','MARUTI','MCDOWELL-N','MCX','MFSL','MGL','MINDTREE','MPHASIS','MRF','MUTHOOTFIN','NAM-INDIA','NAUKRI'
+    ,'NAVINFLUOR','OBEROIRLTY','PAGEIND','PERSISTENT','PIDILITIND','PIIND','POLYCAB','PVR','RAMCOCEM','RELIANCE','SBICARD'
+    ,'SBILIFE','SBIN','SHREECEM','SIEMENS','SRF','SRTRANSFIN','SUNPHARMA','SUNTV','SYNGENE','TATACHEM','TATACOMM','TATACONSUM','TATAMOTORS','RAIN','TATASTEEL','TECHM'
     ,'TORNTPHARM','TORNTPOWER','TRENT','TVSMOTOR','UBL','ULTRACEMCO','UPL','VOLTAS','WHIRLPOOL','WIPRO','ZEEL','ZYDUSLIFE','INDUSTOWER','OFSS']
 
     #fnolist = list(LiveSegment.objects.values_list('symbol', flat=True).distinct())
