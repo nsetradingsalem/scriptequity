@@ -97,11 +97,11 @@ def equity():
             if key in fnolist:
                 # print(key)
                 LiveSegment.objects.filter(symbol=key).all().delete()
-                if float(value[6]) >= 2:
+                if float(value[6]) >= 3:
                     gain = LiveSegment(symbol=key,segment="gain",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     gain.save()
 
-                elif float(value[6]) <= -2:
+                elif float(value[6]) <= -3:
                     loss = LiveSegment(symbol=key,segment="loss",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     loss.save()
 
