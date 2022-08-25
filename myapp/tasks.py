@@ -156,9 +156,12 @@ def equity():
                 if len(historyput) > 0:
                     diffputstrike = HistoryOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffputstrike = diffputstrike.putstrike
+                    print("######### CALL #############")
+                    print(f"diff put history {diffputstrike}")
                     if diffputstrike == 0 or diffputstrike == '0':
                         diffputstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('-time')
                         diffputstrike = diffputstrike[1].putstrike
+                        print(f"diff put history {diffputstrike}")
                 else:
                     diffputstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffputstrike = diffputstrike.putstrike
@@ -270,9 +273,12 @@ def equity():
                 if len(historycall) > 0:
                     diffcallstrike = HistoryOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffcallstrike = diffcallstrike.callstrike
+                    print("######### PUT #############")
+                    print(f"diff call history {diffcallstrike}")
                     if diffcallstrike == 0 or diffcallstrike == '0':
                         diffcallstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('-time')
                         diffcallstrike = diffcallstrike[1].callstrike
+                        print(f"diff call history taken {diffcallstrike}")
                 else:
                     diffcallstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffcallstrike = diffcallstrike.callstrike
