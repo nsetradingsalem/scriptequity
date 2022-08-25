@@ -159,14 +159,14 @@ def equity():
                     print("######### CALL #############")
                     print(f"diff put history {diffputstrike}")
                     if diffputstrike == 0 or diffputstrike == '0':
-                        diffputstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('-time')
+                        diffputstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('time')
                         diffputstrike = diffputstrike[1].putstrike
                         print(f"diff put history {diffputstrike}")
                 else:
                     diffputstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffputstrike = diffputstrike.putstrike
                     if diffputstrike == 0 or diffputstrike == '0':
-                        diffputstrike = LiveOIChange.objects.filter(symbol=e.symbol).order_by('-time')
+                        diffputstrike = LiveOIChange.objects.filter(symbol=e.symbol).order_by('time')
                         diffputstrike = diffputstrike[1].putstrike
                     # diffputstrike = e.putstrike
 
@@ -276,14 +276,14 @@ def equity():
                     print("######### PUT #############")
                     print(f"diff call history {diffcallstrike}")
                     if diffcallstrike == 0 or diffcallstrike == '0':
-                        diffcallstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('-time')
+                        diffcallstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('time')
                         diffcallstrike = diffcallstrike[1].callstrike
                         print(f"diff call history taken {diffcallstrike}")
                 else:
                     diffcallstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffcallstrike = diffcallstrike.callstrike
                     if diffcallstrike == 0 or diffcallstrike == '0':
-                        diffcallstrike = LiveOIChange.objects.filter(symbol=e.symbol).order_by('-time')
+                        diffcallstrike = LiveOIChange.objects.filter(symbol=e.symbol).order_by('time')
                         diffcallstrike = diffcallstrike[1].callstrike
                     # diffcallstrike = e.callstrike
 
