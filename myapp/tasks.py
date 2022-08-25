@@ -156,9 +156,15 @@ def equity():
                 if len(historyput) > 0:
                     diffputstrike = HistoryOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffputstrike = diffputstrike.putstrike
+                    if diffputstrike == 0 or diffputstrike == '0':
+                        diffputstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('-time')
+                        diffputstrike = diffputstrike[1].putstrike
                 else:
                     diffputstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffputstrike = diffputstrike.putstrike
+                    if diffputstrike == 0 or diffputstrike == '0':
+                        diffputstrike = LiveOIChange.objects.filter(symbol=e.symbol).order_by('-time')
+                        diffputstrike = diffputstrike[1].putstrike
                     # diffputstrike = e.putstrike
 
                 if len(historycall) > 0:
@@ -264,10 +270,15 @@ def equity():
                 if len(historycall) > 0:
                     diffcallstrike = HistoryOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffcallstrike = diffcallstrike.callstrike
-
+                    if diffcallstrike == 0 or diffcallstrike == '0':
+                        diffcallstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('-time')
+                        diffcallstrike = diffcallstrike[1].callstrike
                 else:
                     diffcallstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffcallstrike = diffcallstrike.callstrike
+                    if diffcallstrike == 0 or diffcallstrike == '0':
+                        diffcallstrike = LiveOIChange.objects.filter(symbol=e.symbol).order_by('-time')
+                        diffcallstrike = diffcallstrike[1].callstrike
                     # diffcallstrike = e.callstrike
 
                 if len(historyput) > 0:
