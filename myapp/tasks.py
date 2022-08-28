@@ -116,6 +116,8 @@ def equity():
 
         gainList = list(LiveSegment.objects.filter(segment="gain").values_list('symbol', flat=True))
         lossList = list(LiveSegment.objects.filter(segment="loss").values_list('symbol', flat=True))
+        above = list(LiveSegment.objects.filter(segment="above").values_list('symbol', flat=True))
+        below = list(LiveSegment.objects.filter(segment="below").values_list('symbol', flat=True))
 
 
         for e in LiveOITotalAllSymbol.objects.all():
@@ -144,7 +146,7 @@ def equity():
             
             strikegp = LiveOITotal.objects.filter(symbol=e.symbol)
 
-            if e.symbol in liveData and e.symbol in gainList:
+            if e.symbol in liveData and e.symbol in above:
                 print(e.symbol)
                 # print(liveData)
 
@@ -264,7 +266,7 @@ def equity():
 
             # Put
             # print(liveData)
-            if e.symbol in liveData and e.symbol in lossList:
+            if e.symbol in liveData and e.symbol in below:
                                         # Difference Calculation
                 historycall = HistoryOIChange.objects.filter(symbol=e.symbol)
                 historyput = HistoryOITotal.objects.filter(symbol=e.symbol)
