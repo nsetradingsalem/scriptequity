@@ -417,7 +417,5 @@ def equity():
         # return render(request,"testhtml.html",{'symbol':item,'counter':1}) 
 
 
-# while True:
-#     equity()
-
-equity()
+while True:
+    equity()
