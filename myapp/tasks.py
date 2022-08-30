@@ -38,6 +38,7 @@ def equity():
         ,'SBILIFE','SBIN','SHREECEM','SIEMENS','SRF','SRTRANSFIN','SUNPHARMA','SUNTV','SYNGENE','TATACHEM','TATACOMM','TATACONSUM','TATAMOTORS','RAIN','TATASTEEL','TECHM'
         ,'TORNTPHARM','TORNTPOWER','TRENT','TVSMOTOR','UBL','ULTRACEMCO','UPL','VOLTAS','WHIRLPOOL','WIPRO','ZEEL','ZYDUSLIFE','INDUSTOWER','OFSS']
 
+        # fnolist = ['PAGEIND']
         # Default production port is 8082 in the library. Other ports may be given t oyou during trial.
         realtime_port = 8082
 
@@ -89,9 +90,9 @@ def equity():
             openputcrossDict[i.symbol] = i.time
 
         # Graceful exit
-        # td_app.stop_live_data(fnolist)
-        # td_app.disconnect()
-        # td_app.disconnect()
+        td_app.stop_live_data(fnolist)
+        td_app.disconnect()
+        td_app.disconnect()
 
         for key,value in liveData.items():
             print(f"Key: {key} \nValue:{value}")
@@ -110,7 +111,7 @@ def equity():
                     below = LiveSegment(symbol=key,segment="below",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     below.save()
 
-                elif float(value[6]) > 0:
+                elif float(value[6]) >= 0:
                     above = LiveSegment(symbol=key,segment="above",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     above.save()
 
@@ -193,21 +194,22 @@ def equity():
                 
                 difference = float(diffputstrike) - float(diffcallstrike)
                 section = int(abs((float(diffputstrike) - float(diffcallstrike))/float(strikegp[0].strikegap)))
-                print("call Strike: {callstrike}")
+                print(f"call Strike: {callstrike}")
+
                 if float(liveData[e.symbol][1]) > float(callstrike):
                     print("open checked")
                     if e.symbol in opencallcrossDict:
                         LiveEquityResult.objects.filter(symbol = e.symbol).delete()
                         callcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call Crossed",opencrossed="call",time=opencallcrossDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                         callcross.save()
-
                         continue
                     else:
                         callcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call Crossed",opencrossed="call",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                         callcross.save()
                         continue
+                  
                 # High Check
-                if float(liveData[e.symbol][2]) > float(callstrike):
+                elif float(liveData[e.symbol][2]) > float(callstrike):
                     print("high checked")
                     if e.symbol in callcrossedsetDict:
                         LiveEquityResult.objects.filter(symbol = e.symbol).delete()
@@ -220,7 +222,7 @@ def equity():
                         continue
 
 
-                if float(liveData[e.symbol][0]) > float(callstrike) or float(liveData[e.symbol][1]) > float(callstrike):
+                elif float(liveData[e.symbol][0]) > float(callstrike):
                     print("ltp checked")
                     if e.symbol in callcrossedsetDict:
                         # print("Yes")
@@ -263,20 +265,20 @@ def equity():
                     # LiveEquityResult.objects.filter(symbol =e.symbol,strike="Call").delete()
                     # callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                     # callone.save()
-                    if e.symbol in callcrossedsetDict:
-                        LiveEquityResult.objects.filter(symbol=e.symbol,strike="Call").delete()
-                        LiveEquityResult.objects.filter(symbol = e.symbol).delete()
-                        callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call Crossed",opencrossed="Nil",time=callcrossedsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
-                        callone.save()
-                    elif e.symbol in callonepercentsetDict:
-                        LiveEquityResult.objects.filter(symbol=e.symbol,strike="Call").delete()
-                        LiveEquityResult.objects.filter(symbol = e.symbol).delete()
-                        callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call 1 percent",opencrossed="Nil",time=callonepercentsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
-                        callone.save()
-                    else:
-                        LiveEquityResult.objects.filter(symbol=e.symbol).delete()
-                        callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
-                        callone.save()
+                    # if e.symbol in callcrossedsetDict:
+                    #     LiveEquityResult.objects.filter(symbol=e.symbol,strike="Call").delete()
+                    #     LiveEquityResult.objects.filter(symbol = e.symbol).delete()
+                    #     callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call Crossed",opencrossed="Nil",time=callcrossedsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
+                    #     callone.save()
+                    # elif e.symbol in callonepercentsetDict:
+                    #     LiveEquityResult.objects.filter(symbol=e.symbol,strike="Call").delete()
+                    #     LiveEquityResult.objects.filter(symbol = e.symbol).delete()
+                    #     callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call 1 percent",opencrossed="Nil",time=callonepercentsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
+                    #     callone.save()
+                    # else:
+                    LiveEquityResult.objects.filter(symbol=e.symbol).delete()
+                    callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
+                    callone.save()
 
             # Put
             # print(liveData)
