@@ -38,7 +38,7 @@ def equity():
         ,'SBILIFE','SBIN','SHREECEM','SIEMENS','SRF','SRTRANSFIN','SUNPHARMA','SUNTV','SYNGENE','TATACHEM','TATACOMM','TATACONSUM','TATAMOTORS','RAIN','TATASTEEL','TECHM'
         ,'TORNTPHARM','TORNTPOWER','TRENT','TVSMOTOR','UBL','ULTRACEMCO','UPL','VOLTAS','WHIRLPOOL','WIPRO','ZEEL','ZYDUSLIFE','INDUSTOWER','OFSS']
 
-        # fnolist = ['PAGEIND']
+        # fnolist = ['BAJAJFINSV']
         # Default production port is 8082 in the library. Other ports may be given t oyou during trial.
         realtime_port = 8082
 
@@ -121,7 +121,7 @@ def equity():
         above = list(LiveSegment.objects.filter(segment="above").values_list('symbol', flat=True))
         below = list(LiveSegment.objects.filter(segment="below").values_list('symbol', flat=True))
 
-
+        print(f"Total length: {len(LiveOITotalAllSymbol.objects.all())}")
         for e in LiveOITotalAllSymbol.objects.all():
             # print(e.symbol)
             # callcross = TestEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="common",opencrossed="common",time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'),date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'))
@@ -207,7 +207,6 @@ def equity():
                         callcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call Crossed",opencrossed="call",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                         callcross.save()
                         continue
-                  
                 # High Check
                 elif float(liveData[e.symbol][2]) > float(callstrike):
                     print("high checked")
@@ -240,6 +239,7 @@ def equity():
                         callcross.save()
 
                 elif float(liveData[e.symbol][0]) >= float(callone) and float(liveData[e.symbol][0]) <= float(callstrike):
+                    print("one percent check")
 
                     if e.symbol in callcrossedsetDict:
                         # print("Already crossed")
@@ -274,6 +274,7 @@ def equity():
                     #     callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call 1 percent",opencrossed="Nil",time=callonepercentsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                     #     callone.save()
                     # else:
+                    print("default update")
                     LiveEquityResult.objects.filter(symbol=e.symbol).delete()
                     callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                     callone.save()
@@ -281,6 +282,7 @@ def equity():
             # Put
             # print(liveData)
             if e.symbol in liveData and e.symbol in below:
+                print("the symbol is in above")
                 # Difference Calculation
                 historycall = HistoryOIChange.objects.filter(symbol=e.symbol)
                 historyput = HistoryOITotal.objects.filter(symbol=e.symbol)
@@ -326,6 +328,7 @@ def equity():
                 # putcross.save()
 
                 if float(liveData[e.symbol][1]) < float(putstrike):
+                    print("open check")
                     if e.symbol in openputcrossDict:
                         LiveEquityResult.objects.filter(symbol = e.symbol).delete()
                         putcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put Crossed",opencrossed="put",time=openputcrossDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
@@ -337,6 +340,7 @@ def equity():
                         continue
                 #puthigh Check   
                 elif float(liveData[e.symbol][3]) < float(putstrike):
+                    print("high check")
                     if e.symbol in putcrossedsetDict:
                         LiveEquityResult.objects.filter(symbol = e.symbol).delete()
                         putcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put Crossed",opencrossed="Nil",time=putcrossedsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
@@ -348,6 +352,7 @@ def equity():
                         continue
 
                 elif float(liveData[e.symbol][0]) < float(putstrike):
+                    print("ltp check")
                     if e.symbol in putcrossedsetDict:
                         # Deleting the older
                         LiveEquityResult.objects.filter(symbol =e.symbol).delete()
@@ -362,6 +367,7 @@ def equity():
                         putcross.save()
 
                 elif float(liveData[e.symbol][0]) <= float(putone) and float(liveData[e.symbol][0]) >= float(putstrike):
+                    print("one percent check")
                     if e.symbol in putcrossedsetDict:
                         # print("Already crossed put")
                         continue
@@ -390,9 +396,10 @@ def equity():
                     #     callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put 1 percent",opencrossed="Nil",time=putonepercentsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                     #     callone.save()
                     # else:
-                        LiveEquityResult.objects.filter(symbol=e.symbol).delete()
-                        putone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
-                        putone.save()
+                    print("default update")
+                    LiveEquityResult.objects.filter(symbol=e.symbol).delete()
+                    putone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
+                    putone.save()
 
     except websocket.WebSocketConnectionClosedException as e:
         print('This caught the websocket exception in equity realtime')
