@@ -38,6 +38,8 @@ def equity():
         ,'SBILIFE','SBIN','SHREECEM','SIEMENS','SRF','SRTRANSFIN','SUNPHARMA','SUNTV','SYNGENE','TATACHEM','TATACOMM','TATACONSUM','TATAMOTORS','RAIN','TATASTEEL','TECHM'
         ,'TORNTPHARM','TORNTPOWER','TRENT','TVSMOTOR','UBL','ULTRACEMCO','UPL','VOLTAS','WHIRLPOOL','WIPRO','ZEEL','ZYDUSLIFE','INDUSTOWER','OFSS']
 
+        fnolist = ['ESCORTS']
+
         # Default production port is 8082 in the library. Other ports may be given t oyou during trial.
         realtime_port = 8082
 
@@ -89,23 +91,24 @@ def equity():
             openputcrossDict[i.symbol] = i.time
 
         # Graceful exit
-        td_app.stop_live_data(fnolist)
-        td_app.disconnect()
-        td_app.disconnect()
+        # td_app.stop_live_data(fnolist)
+        # td_app.disconnect()
+        # td_app.disconnect()
 
         for key,value in liveData.items():
+            print(f"Key: {key} \nValue:{value}")
             if key in fnolist:
                 # print(key)
                 LiveSegment.objects.filter(symbol=key).all().delete()
-                if float(value[6]) >= 3:
-                    gain = LiveSegment(symbol=key,segment="gain",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
-                    gain.save()
+                # if float(value[6]) >= 3:
+                #     gain = LiveSegment(symbol=key,segment="gain",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
+                #     gain.save()
 
-                elif float(value[6]) <= -3:
-                    loss = LiveSegment(symbol=key,segment="loss",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
-                    loss.save()
+                # elif float(value[6]) <= -3:
+                #     loss = LiveSegment(symbol=key,segment="loss",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
+                #     loss.save()
 
-                elif float(value[6]) <= 0:
+                if float(value[6]) <= 0:
                     below = LiveSegment(symbol=key,segment="below",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     below.save()
 
@@ -148,6 +151,7 @@ def equity():
 
             if e.symbol in liveData and e.symbol in above:
                 print(e.symbol)
+                print("the symbol is in above")
                 # print(liveData)
 
                 # Difference Calculation
@@ -160,9 +164,18 @@ def equity():
                     diffputstrike = diffputstrike.putstrike
                     print("######### CALL #############")
                     print(f"diff put history {diffputstrike}")
+                    history_len = 0
                     if diffputstrike == 0 or diffputstrike == '0':
-                        diffputstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('time')
-                        diffputstrike = diffputstrike[1].putstrike
+                        diffputstrike_db = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('time')
+                        count = 1
+                        while diffputstrike == 0 or diffputstrike == '0':
+                            if count < len(diffputstrike_db):
+                                diffputstrike = diffputstrike_db[count].putstrike
+                                count +=1
+                            else:
+                                diffputstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
+                                diffputstrike = diffputstrike.putstrike
+                                break
                         print(f"diff put history {diffputstrike}")
                 else:
                     diffputstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
@@ -182,8 +195,9 @@ def equity():
                 
                 difference = float(diffputstrike) - float(diffcallstrike)
                 section = int(abs((float(diffputstrike) - float(diffcallstrike))/float(strikegp[0].strikegap)))
-
+                print("call Strike: {callstrike}")
                 if float(liveData[e.symbol][1]) > float(callstrike):
+                    print("open checked")
                     if e.symbol in opencallcrossDict:
                         LiveEquityResult.objects.filter(symbol = e.symbol).delete()
                         callcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call Crossed",opencrossed="call",time=opencallcrossDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
@@ -196,6 +210,7 @@ def equity():
                         continue
                 # High Check
                 if float(liveData[e.symbol][2]) > float(callstrike):
+                    print("high checked")
                     if e.symbol in callcrossedsetDict:
                         LiveEquityResult.objects.filter(symbol = e.symbol).delete()
                         callcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call Crossed",opencrossed="Nil",time=callcrossedsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
@@ -208,6 +223,7 @@ def equity():
 
 
                 if float(liveData[e.symbol][0]) > float(callstrike) or float(liveData[e.symbol][1]) > float(callstrike):
+                    print("ltp checked")
                     if e.symbol in callcrossedsetDict:
                         # print("Yes")
                         # Deleting the older
@@ -277,10 +293,18 @@ def equity():
                     diffcallstrike = diffcallstrike.callstrike
                     print("######### PUT #############")
                     print(f"diff call history {diffcallstrike}")
+                    history_len = 0
                     if diffcallstrike == 0 or diffcallstrike == '0':
-                        diffcallstrike = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('time')
-                        diffcallstrike = diffcallstrike[1].callstrike
-                        print(f"diff call history taken {diffcallstrike}")
+                        diffcallstrike_db = HistoryOIChange.objects.filter(symbol=e.symbol).order_by('time')
+                        count = 1
+                        while diffcallstrike == 0 or diffcallstrike == '0':
+                            if count < len(diffcallstrike_db):
+                                diffcallstrike = diffcallstrike_db[count].putstrike
+                                count +=1
+                            else:
+                                diffcallstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
+                                diffcallstrike = diffcallstrike.callstrike
+                                break
                 else:
                     diffcallstrike = LiveOIChange.objects.filter(symbol=e.symbol).earliest('time')
                     diffcallstrike = diffcallstrike.callstrike
@@ -393,5 +417,7 @@ def equity():
         # return render(request,"testhtml.html",{'symbol':item,'counter':1}) 
 
 
-while True:
-    equity()
+# while True:
+#     equity()
+
+equity()
