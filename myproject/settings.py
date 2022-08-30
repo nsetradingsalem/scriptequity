@@ -167,7 +167,7 @@ USE_L10N = True
 
 USE_TZ = False
 
-# CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_URL = 'amqp://localhost'
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 # BROKER_URL = 'django://'
 #CELERY_BROKER_URL = 'redis://:p1b6b84e67facd107957e878035c0fc2ad3da5f6d4ca0c138e7bac0f4a3bfb055@ec2-54-152-181-10.compute-1.amazonaws.com:27179'
