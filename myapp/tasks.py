@@ -66,9 +66,9 @@ def equity():
         removeList = ["NIFTY","BANKNIFTY","FINNIFTY"]
 
         callcrossedset = LiveEquityResult.objects.filter(strike__contains="Call Crossed")
-        callonepercentset = LiveEquityResult.objects.filter(strike="Call 1 percent")
+        callonepercentset = LiveEquityResult.objects.filter(strike="Call 1/2 percent")
         putcrossedset = LiveEquityResult.objects.filter(strike="Put Crossed")
-        putonepercentset = LiveEquityResult.objects.filter(strike="Put 1 percent")
+        putonepercentset = LiveEquityResult.objects.filter(strike="Put 1/2 percent")
         opencallcross = LiveEquityResult.objects.filter(opencrossed="call")
         openputcross = LiveEquityResult.objects.filter(opencrossed="put")
 
@@ -146,9 +146,9 @@ def equity():
                 callstrike = historyStrike.callstrike
                 putstrike = historyStrike.putstrike
                 # Call 1 percent 
-                callone = float(callstrike) - (float(strikegp[0].strikegap))*0.99
+                callone = float(callstrike) - (float(strikegp[0].strikegap))*0.50
                 # Put 1 percent
-                putone = float(putstrike) + (float(strikegp[0].strikegap))*0.99
+                putone = float(putstrike) + (float(strikegp[0].strikegap))*0.50
 
             else:
                 callstrike = e.callstrike
@@ -263,14 +263,14 @@ def equity():
                                 # print("Already crossed 1 percent")
                                 LiveEquityResult.objects.filter(symbol = e.symbol).delete()
                                 # updating latest data
-                                callcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call 1 percent",opencrossed="Nil",time=callonepercentsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
+                                callcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call 1/2 percent",opencrossed="Nil",time=callonepercentsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                                 callcross.save()
 
                                 continue
                             else:
                                 # print("Call 1 percent")
 
-                                callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call 1 percent",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
+                                callone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Call 1/2 percent",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                                 callone.save()
 
                     else:
@@ -396,12 +396,12 @@ def equity():
                                 # print("Already crossed 1 percent")
                                 LiveEquityResult.objects.filter(symbol =e.symbol).delete()
                                 # updating latest data
-                                putcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put 1 percent",opencrossed="Nil",time=putonepercentsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
+                                putcross = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put 1/2 percent",opencrossed="Nil",time=putonepercentsetDict[e.symbol],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                                 putcross.save()
                                 continue
                             else:
                                 # print("Put 1 percent")
-                                putone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put 1 percent",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
+                                putone = LiveEquityResult(symbol=e.symbol,open=liveData[e.symbol][1],high=liveData[e.symbol][2],low=liveData[e.symbol][3],prev_day_close=liveData[e.symbol][4],ltp=liveData[e.symbol][0],strike="Put 1/2 percent",opencrossed="Nil",time=liveData[e.symbol][5],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d %H:%M:%S'),section=section,difference=difference,change_perc=liveData[e.symbol][6])
                                 putone.save()
                     
                     else:
