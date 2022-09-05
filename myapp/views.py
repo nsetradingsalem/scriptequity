@@ -280,7 +280,7 @@ def equity(request):
     callodd = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=True).filter(strike="Call 1 percent").filter(change_perc__gte=2).order_by('section') 
     puteven = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=False).filter(strike="Put 1 percent").filter(change_perc__lte=-2).order_by('section')  
     putodd = LiveEquityResult.objects.annotate(odd=F('section') % 2).filter(odd=True).filter(strike="Put 1 percent").filter(change_perc__lte=-2).order_by('section') 
-
+    
     call_result_odd_count =  len(callodd) + len(callCrossed_odd)
     call_result_even_count = len(calleven) + len(callCrossed_even)
     put_result_odd_count =  len(putodd) + len(putCrossed_odd)
