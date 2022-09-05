@@ -11,7 +11,7 @@ class findThree(models.Model):
     time = models.TimeField(auto_now_add=False)
     date = models.DateField(auto_now_add=False)
     def __str__(self):
-        return self.symbol
+        return self.time
     class Meta:
 
         app_label = 'myapp'
