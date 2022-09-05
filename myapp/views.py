@@ -7,7 +7,7 @@ from django.shortcuts import redirect,render
 from django.contrib import messages
 from nsepython import *
 import nsepython
-from myapp.models import HistoryOIChange,HistoryOITotal,LiveOIChange,LiveOITotal,LiveOITotalAllSymbol,LiveEquityResult,LiveOIPercentChange,HistoryOIPercentChange, LiveSegment
+from myapp.models import HistoryOIChange,HistoryOITotal,LiveOIChange,LiveOITotal,LiveOITotalAllSymbol,LiveEquityResult,LiveOIPercentChange,HistoryOIPercentChange, LiveSegment,findThree
 from django.db.models import Count, F, Value
 
 import pandas as pd
