@@ -88,6 +88,7 @@ def equity():
         td_app.disconnect()
         td_app.disconnect()
         three_list = list(EquityThree.objects.all().values_list('symbol', flat=True)) 
+        super_three_list = list(SuperLiveSegment.objects.all().values_list('symbol', flat=True)) 
         for key,value in liveData.items():
             print(f"Key: {key} \nValue:{value}")
             if key in fnolist:
@@ -100,11 +101,11 @@ def equity():
                     three = EquityThree(symbol=key,date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     three.save()
 
-                if float(value[6]) >= 2:
+                if float(value[6]) >= 2 and key not in super_three_list:
                     gain = SuperLiveSegment(symbol=key,segment="gain",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     gain.save()
 
-                elif float(value[6]) <= -2:
+                elif float(value[6]) <= -2 and key not in super_three_list:
                     loss = SuperLiveSegment(symbol=key,segment="loss",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     loss.save()
 
