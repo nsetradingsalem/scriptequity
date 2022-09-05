@@ -187,8 +187,8 @@ class LiveSegment(models.Model):
     change_perc = models.FloatField(default=0)
     doneToday = models.CharField(max_length=10,default="")
 
-    # def __str__(self):
-    #     return self.symbol+" "+self.segment+" "+self.date
+    def __str__(self):
+        return self.symbol+" "+self.segment+" "+str(self.date)
 
     class Meta:
 
