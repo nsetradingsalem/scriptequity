@@ -11,7 +11,7 @@ class EquityThree(models.Model):
     time = models.TimeField(auto_now_add=False)
     date = models.DateField(auto_now_add=False)
     def __str__(self):
-        return self.time
+        return self.symbol
     class Meta:
 
         app_label = 'myapp'
