@@ -101,11 +101,11 @@ def equity():
                     three = EquityThree(symbol=key,change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     three.save()
 
-                if float(value[6]) >= 2 and key not in super_three_list:
+                if float(value[6]) >= 1.5 and key not in super_three_list:
                     gain = SuperLiveSegment(symbol=key,segment="gain",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     gain.save()
 
-                elif float(value[6]) <= -2 and key not in super_three_list:
+                elif float(value[6]) <= -1.5 and key not in super_three_list:
                     loss = SuperLiveSegment(symbol=key,segment="loss",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
                     loss.save()
 
