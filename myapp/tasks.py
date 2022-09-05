@@ -1,5 +1,6 @@
 from operator import le
 from time import sleep
+from xml.etree.ElementPath import find
 from celery import shared_task
 from .models import *
 from nsetools import *
@@ -24,7 +25,7 @@ import time as te
 
 def equity():
     try:
-        # result_items = EquityThree.objects.all()
+        result_items = findThree.objects.all()
         print(f"############# \n {result_items}\n############# \n")
         equity_username = 'tdwsp135'
         equity_password = 'saaral@135'
@@ -86,26 +87,26 @@ def equity():
         td_app.stop_live_data(fnolist)
         td_app.disconnect()
         td_app.disconnect()
-        # three_list = list(EquityThree.objects.all().values_list('symbol', flat=True)) 
+        three_list = list(findThree.objects.all().values_list('symbol', flat=True)) 
         for key,value in liveData.items():
             print(f"Key: {key} \nValue:{value}")
             if key in fnolist:
                 # print(key)
                 LiveSegment.objects.filter(symbol=key).all().delete()
-                # if value[6] >= 3 and key not in three_list:
-                #     three = EquityThree(symbol=key,date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
-                #     three.save()
-                # elif value[6] <= -3 and key not in three_list:
-                #     three = EquityThree(symbol=key,date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
-                #     three.save()
+                if value[6] >= 3 and key not in three_list:
+                    three = findThree(symbol=key,date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
+                    three.save()
+                elif value[6] <= -3 and key not in three_list:
+                    three = findThree(symbol=key,date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
+                    three.save()
 
-                # if float(value[6]) >= 3:
-                #     gain = LiveSegment(symbol=key,segment="gain",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
-                #     gain.save()
+                if float(value[6]) >= 2:
+                    gain = SuperLiveSegment(symbol=key,segment="gain",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
+                    gain.save()
 
-                # elif float(value[6]) <= -3:
-                #     loss = LiveSegment(symbol=key,segment="loss",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
-                #     loss.save()
+                elif float(value[6]) <= -2:
+                    loss = SuperLiveSegment(symbol=key,segment="loss",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))
+                    loss.save()
 
                 if float(value[6]) <= 0:
                     below = LiveSegment(symbol=key,segment="below",change_perc=value[6],date=dt.now(timezone("Asia/Kolkata")).strftime('%Y-%m-%d'),time=dt.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S'))

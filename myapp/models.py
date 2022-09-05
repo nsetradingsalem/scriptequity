@@ -6,7 +6,7 @@ from scipy.stats.stats import mode
 
 # Create your models here.
 
-class EquityThree(models.Model):
+class findThree(models.Model):
     symbol = models.CharField(max_length=20)
     time = models.TimeField(auto_now_add=False)
     date = models.DateField(auto_now_add=False)
