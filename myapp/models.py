@@ -199,10 +199,7 @@ class SuperLiveSegment(models.Model):
     segment = models.CharField(max_length=20)
     time = models.TimeField(auto_now_add=False)
     date = models.DateField(auto_now_add=False)
-    change_perc = models.FloatField(default=0)
-
-    def __str__(self):
-        return self.symbol+" "+self.segment+" "+self.date
+    change_perc = models.FloatField(default=1)
 
     class Meta:
 
