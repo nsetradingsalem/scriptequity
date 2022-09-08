@@ -139,9 +139,10 @@ def equity():
                 callstrike = historyStrike.callstrike
                 putstrike = historyStrike.putstrike
                 # Call 1 percent 
-                callone = float(callstrike) - (float(strikegp[0].strikegap))
+                strike_gap = (float(strikegp[0].strikegap)) * 2
+                callone = float(callstrike) - strike_gap
                 # Put 1 percent
-                putone = float(putstrike) + (float(strikegp[0].strikegap))
+                putone = float(putstrike) + strike_gap
 
             else:
                 callstrike = e.callstrike
